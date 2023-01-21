@@ -1,6 +1,6 @@
 # ResumeRise Backend
 
-# Getting Started
+## Getting Started
 
 The fastest and easiest way to get started is to run MongoDB and Redis Server locally.
 
