@@ -9,7 +9,7 @@ The fastest and easiest way to get started is to run MongoDB and Redis Server lo
 Before you start make sure you have installed:
 
 - [NodeJS](https://www.npmjs.com/) that includes `npm`
-- [MongoDB](https://www.mongodb.com/) or [PostgreSQL](
+- [MongoDB](https://www.mongodb.com/)
 
 ### Compatibility
 
