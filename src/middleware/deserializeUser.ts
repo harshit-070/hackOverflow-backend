@@ -1,13 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { findOrganizationById } from "../services/Organization.service";
-import {
-  ADMIN,
-  ORGANIZATION,
-  UNAUTHORIZE,
-  USER,
-} from "../utils/constants.utils";
+
 import { decode } from "../utils/jwt.utils";
 import ErrorHandler from "../utils/error.utils";
+import UserModel from "../models/user.model";
 const deserializeUser = async (
   req: Request,
   res: Response,
@@ -19,20 +14,14 @@ const deserializeUser = async (
   }
   const { decoded } = decode(accessToken);
   if (decoded) {
-    const { role, _id } = decoded as any;
+    const { _id } = decoded as any;
 
-    if (role === USER) {
-    } else if (role === ORGANIZATION) {
-      const organization = await findOrganizationById(_id);
+    const user = await UserModel.findOne({ _id });
 
-      if (!organization) {
-        throw new ErrorHandler(UNAUTHORIZE, 400);
-      }
-      res.locals.user = organization;
-      res.locals.user.role = ORGANIZATION;
-    } else if (role === ADMIN) {
-      res.locals.admin = decoded;
+    if (user) {
+      res.locals.user = user;
     }
+
     return next();
   }
 

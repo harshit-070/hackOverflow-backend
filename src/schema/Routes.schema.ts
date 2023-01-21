@@ -7,7 +7,7 @@ const resume_id = string({ required_error: "Resume Id is Required" }).refine(
 );
 
 export const getResumeSchema = object({
-  body: object({
+  params: object({
     resume_id,
   }),
 });

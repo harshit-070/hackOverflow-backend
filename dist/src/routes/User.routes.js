@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const User_controller_1 = require("../controller/User.controller");
+const validateRequest_1 = __importDefault(require("../middleware/validateRequest"));
+const User_schema_1 = require("../schema/User.schema");
+const router = (0, express_1.Router)();
+router.get("/sendOTP", [(0, validateRequest_1.default)(User_schema_1.sendOTPSchema)], User_controller_1.sendOTPHandler);
+router.post("/signup", [(0, validateRequest_1.default)(User_schema_1.signupUserSchema)], User_controller_1.signupUserHandler);
+router.post("/login", [(0, validateRequest_1.default)(User_schema_1.loginUserSchema)], User_controller_1.loginUserHandler);
+router.get("/google", User_controller_1.googleRedirectURLHandler);
+router.post("/google/auth", [(0, validateRequest_1.default)(User_schema_1.googleRedrectURLSchema)], User_controller_1.googleUserLoginHandler);
+router.get("/github", User_controller_1.githubRedirectURLHandler);
+router.post("/github/auth", [(0, validateRequest_1.default)(User_schema_1.googleRedrectURLSchema)], User_controller_1.githubUserLoginHandler);
+router.get("/forgotOTP", [(0, validateRequest_1.default)(User_schema_1.sendOTPSchema)], User_controller_1.forgotPasswordOTPHandler);
+router.post("/resetPassword", [(0, validateRequest_1.default)(User_schema_1.updatePasswordSchema)], User_controller_1.forgotPasswordHandler);
+exports.default = router;

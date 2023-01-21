@@ -1,5 +1,7 @@
 import { Router } from "express";
 import {
+  forgotPasswordHandler,
+  forgotPasswordOTPHandler,
   githubRedirectURLHandler,
   githubUserLoginHandler,
   googleRedirectURLHandler,
@@ -14,6 +16,7 @@ import {
   loginUserSchema,
   sendOTPSchema,
   signupUserSchema,
+  updatePasswordSchema,
 } from "../schema/User.schema";
 const router = Router();
 
@@ -25,17 +28,29 @@ router.post("/login", [validateRequest(loginUserSchema)], loginUserHandler);
 
 router.get("/google", googleRedirectURLHandler);
 
-router.get(
+router.post(
   "/google/auth",
   [validateRequest(googleRedrectURLSchema)],
   googleUserLoginHandler
 );
 router.get("/github", githubRedirectURLHandler);
 
-router.get(
+router.post(
   "/github/auth",
   [validateRequest(googleRedrectURLSchema)],
   githubUserLoginHandler
+);
+
+router.get(
+  "/forgotOTP",
+  [validateRequest(sendOTPSchema)],
+  forgotPasswordOTPHandler
+);
+
+router.post(
+  "/resetPassword",
+  [validateRequest(updatePasswordSchema)],
+  forgotPasswordHandler
 );
 
 export default router;

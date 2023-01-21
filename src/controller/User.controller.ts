@@ -6,6 +6,7 @@ import {
   loginUserInput,
   sendOTPInput,
   signupUserInput,
+  updatePasswordInput,
 } from "../schema/User.schema";
 import {
   createUser,
@@ -24,12 +25,14 @@ import { google } from "googleapis";
 import axios from "axios";
 import config from "config";
 import mongoose from "mongoose";
+import { sendEmail, sendForgotPasswordEmail } from "../services/Email.service";
+import UserModel from "../models/user.model";
 const OTP_TIME_LIMIT_IN_MS = 15 * 60 * 1000; // 15 minutes
 
 const oAuth2Client = new google.auth.OAuth2(
   config.get("GOOGLE.CLIENT_ID"),
   config.get("GOOGLE.CLIENT_SECRET"),
-  "http://localhost:3000/auth/google"
+  process.env.GOOGLE_REDIRECT || "http://localhost:3000/google/auth"
 );
 
 export const sendOTPHandler = asyncHandler(
@@ -54,6 +57,7 @@ export const sendOTPHandler = asyncHandler(
 
     console.log(otp);
     // TODO: Send Email after otp Generation
+    await sendEmail(email, otp);
 
     return res
       .status(200)
@@ -70,11 +74,16 @@ export const signupUserHandler = asyncHandler(
     const { otp } = req.body;
     let { email, username } = req.body;
     email = email.toLowerCase();
-
-    const isUserExist = await findUserByUsername(username);
+    let isUserExist = await findUserByUsername(username);
 
     if (isUserExist) {
       return next(new ErrorHandler("Username Already Exist", 400));
+    }
+
+    isUserExist = await findUserByEmail(email);
+
+    if (isUserExist) {
+      return next(new ErrorHandler("Email Already Exist", 400));
     }
 
     await validateOTP(email, otp);
@@ -161,7 +170,7 @@ export const googleUserLoginHandler = asyncHandler(
     next: NextFunction
   ) => {
     const { code } = req.query;
-
+    console.log(code);
     const data = await getGoogleUser(code);
 
     const { email, name } = data;
@@ -229,7 +238,11 @@ export const githubRedirectURLHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await axios.get(
-        `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_url=${process.env.GITHUB_REDIRECT}&scope=read:user,user:email`
+        `https://github.com/login/oauth/authorize?client_id=${config.get(
+          "GITHUB.CLIENT_ID"
+        )}&redirect_url=${config.get(
+          "GITHUB.REDIRECT"
+        )}&scope=read:user,user:email`
       );
       return res.status(200).json({
         isSuccess: true,
@@ -257,6 +270,7 @@ export const githubUserLoginHandler = asyncHandler(
   ) => {
     try {
       const { code } = req.query;
+
       const accessTokenResponse = await axios.post(
         `https://github.com/login/oauth/access_token?client_id=${config.get(
           "GITHUB.CLIENT_ID"
@@ -332,5 +346,63 @@ export const githubUserLoginHandler = asyncHandler(
         userLoggedIn: false,
       });
     }
+  }
+);
+
+export const forgotPasswordOTPHandler = asyncHandler(
+  async (
+    req: Request<{}, {}, {}, sendOTPInput>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { email } = req.query;
+
+    const user = await findUserByEmail(email);
+    if (!user || user.type !== "email") {
+      return next(new ErrorHandler("Email not registered", 400));
+    }
+
+    let otp;
+
+    otp = await getRedisKey(userSignupRedisKey(email));
+    if (!otp) {
+      otp = generateOTP();
+      await setRedisKey(userSignupRedisKey(email), otp, OTP_TIME_LIMIT_IN_MS);
+    }
+
+    console.log(otp);
+    // TODO: Send Email after otp Generation
+    await sendForgotPasswordEmail(email, otp);
+
+    return res
+      .status(200)
+      .json({ message: "OTP sent to email", isSuccess: true });
+  }
+);
+
+export const forgotPasswordHandler = asyncHandler(
+  async (
+    req: Request<{}, {}, updatePasswordInput>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    let { email, otp, password } = req.body;
+    email = email.toLowerCase();
+
+    const isUserExist = await findUserByEmail(email);
+
+    if (!isUserExist || isUserExist.type === "eamil") {
+      return next(new ErrorHandler("Invalid OTP", 400));
+    }
+
+    await validateOTP(email, otp);
+
+    const user = await UserModel.findOneAndUpdate({ email }, { password });
+
+    return res.status(201).json({
+      data: user,
+      isSucess: true,
+      message: "Password Reset",
+    });
   }
 );

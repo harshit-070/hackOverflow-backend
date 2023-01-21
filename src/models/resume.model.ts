@@ -21,6 +21,7 @@ export interface ResumeInput {
     github: string;
     instagram: string;
     facebook: string;
+    other: string;
   };
   otherSocialMedia: string[];
   skills: string[];
@@ -28,29 +29,38 @@ export interface ResumeInput {
     title: string;
     name: string;
     location: string;
+    startDate: Date;
+    endDate: Date;
     start_month: number;
     end_month: number;
     start_year: number;
     end_year: number;
     is_present: boolean;
     description: string;
+    category: string;
   }[];
   education: {
     specialization: string;
     name: string;
     percentage: string;
     location: string;
+    startDate: Date;
+    endDate: Date;
     start_month: number;
     end_month: number;
     start_year: number;
     end_year: number;
     description: string;
+    category: string;
+    otherCategory: string;
   }[];
   projects: {
     title: string;
     role: string;
     company: string;
     location: string;
+    startDate: Date;
+    endDate: Date;
     start_month: number;
     end_month: number;
     start_year: number;
@@ -86,6 +96,7 @@ const ResumeSchema = new Schema<ResumeDocument>({
     github: { type: String },
     instagram: { type: String },
     facebook: { type: String },
+    other: { type: String },
   },
   otherSocialMedia: [{ type: String }],
   skills: [{ type: String }],
@@ -94,6 +105,9 @@ const ResumeSchema = new Schema<ResumeDocument>({
       title: { type: String },
       name: { type: String },
       location: { type: String },
+      category: { type: String },
+      startDate: { type: Date },
+      endDate: { type: Date },
       start_month: { type: Number },
       end_month: { type: Number },
       start_year: { type: Number },
@@ -108,11 +122,15 @@ const ResumeSchema = new Schema<ResumeDocument>({
       name: { type: String },
       percentage: { type: String },
       location: { type: String },
+      startDate: { type: Date },
+      endDate: { type: Date },
       start_month: { type: Number },
       end_month: { type: Number },
       start_year: { type: Number },
       end_year: { type: Number },
       description: { type: String },
+      category: { type: String },
+      otherCategory: { type: String },
     },
   ],
   projects: [
@@ -121,6 +139,8 @@ const ResumeSchema = new Schema<ResumeDocument>({
       role: { type: String },
       company: { type: String },
       location: { type: String },
+      startDate: { type: Date },
+      endDate: { type: Date },
       start_month: { type: Number },
       end_month: { type: Number },
       start_year: { type: Number },

@@ -36,9 +36,24 @@ export const googleRedrectURLSchema = object({
   }),
 });
 
+export const updatePasswordSchema = object({
+  body: object({
+    email: string().email(),
+    password: string(),
+    confirmationPassword: string(),
+    otp: number(),
+  })
+    .refine(
+      ({ password, confirmationPassword }) => confirmationPassword === password,
+      "Password and confirm password do not match"
+    )
+    .refine(({ password }) => isStrongPassword(password), "Password is weak"),
+});
+
 export type sendOTPInput = TypeOf<typeof sendOTPSchema>["query"];
 export type signupUserInput = TypeOf<typeof signupUserSchema>["body"];
 export type loginUserInput = TypeOf<typeof loginUserSchema>["body"];
 export type googleRedrectURLQuery = TypeOf<
   typeof googleRedrectURLSchema
 >["query"];
+export type updatePasswordInput = TypeOf<typeof updatePasswordSchema>["body"];

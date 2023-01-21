@@ -1,19 +1,28 @@
 import { Router } from "express";
 import {
+  createResumeHandler,
+  downloadPDF,
   getAchievementsHandler,
   getCertificationHandler,
+  getContactInfoHandler,
   getEducationHandler,
   getExperienceHandler,
   getHobbiesHandler,
   getLanguageHandler,
+  getPersonalInfoHandler,
   getProjectsHandler,
+  getResumeHandler,
+  getSkillsHandler,
   updateAchievementsHandler,
   updateCertificationHandler,
+  updateContactInfoHandler,
   updateEducationHandler,
   updateExperienceHandler,
   updateHobbiesHandler,
   updateLanguageHander,
+  updatePersonalInfoHandler,
   updateProjectsHandler,
+  updateSkillsHandlers,
 } from "../controller/Resume.controller";
 import deserializeUser from "../middleware/deserializeUser";
 import { requireUser } from "../middleware/permission";
@@ -21,18 +30,36 @@ import validateRequest from "../middleware/validateRequest";
 import { getResumeSchema } from "../schema/Routes.schema";
 const router = Router();
 
+router.post("/create", [deserializeUser, requireUser], createResumeHandler);
+
+router.get("/fetch/:resume_id", getResumeHandler);
+
 router.get(
-  "/experience",
+  "/personal/:resume_id",
   [validateRequest(getResumeSchema), deserializeUser, requireUser],
-  getExperienceHandler
+  getPersonalInfoHandler
 );
+
 router.post(
-  "/experience",
+  "/personal",
   [deserializeUser, requireUser],
-  updateExperienceHandler
+  updatePersonalInfoHandler
 );
+
 router.get(
-  "/education",
+  "/contact/:resume_id",
+  [validateRequest(getResumeSchema), deserializeUser, requireUser],
+  getContactInfoHandler
+);
+
+router.post(
+  "/contact",
+  [deserializeUser, requireUser],
+  updateContactInfoHandler
+);
+
+router.get(
+  "/education/:resume_id",
   [validateRequest(getResumeSchema), deserializeUser, requireUser],
   getEducationHandler
 );
@@ -41,8 +68,20 @@ router.post(
   [deserializeUser, requireUser],
   updateEducationHandler
 );
+
 router.get(
-  "/project",
+  "/experience/:resume_id",
+  [validateRequest(getResumeSchema), deserializeUser, requireUser],
+  getExperienceHandler
+);
+router.post(
+  "/experience",
+  [deserializeUser, requireUser],
+  updateExperienceHandler
+);
+
+router.get(
+  "/project/:resume_id",
   [validateRequest(getResumeSchema), deserializeUser, requireUser],
   getProjectsHandler
 );
@@ -60,7 +99,7 @@ router.get(
 );
 router.post("/languages", [deserializeUser, requireUser], updateLanguageHander);
 router.get(
-  "/achievements",
+  "/achievements/:resume_id",
   [validateRequest(getResumeSchema), deserializeUser, requireUser],
   getAchievementsHandler
 );
@@ -79,5 +118,14 @@ router.post(
   [deserializeUser, requireUser],
   updateCertificationHandler
 );
+
+router.get(
+  "/skills/:resume_id",
+  [validateRequest(getResumeSchema), deserializeUser, requireUser],
+  getSkillsHandler
+);
+router.post("/skills", [deserializeUser, requireUser], updateSkillsHandlers);
+
+router.get("/pdf/:resume_id/:template", downloadPDF);
 
 export default router;
