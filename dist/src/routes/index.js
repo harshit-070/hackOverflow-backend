@@ -7,6 +7,9 @@ const error_1 = __importDefault(require("../middleware/error"));
 const User_routes_1 = __importDefault(require("./User.routes"));
 const Resume_routes_1 = __importDefault(require("./Resume.routes"));
 function routes(app) {
+    app.get("/", (req, res) => {
+        return res.status(200);
+    });
     app.get("/healthCheck", (req, res) => {
         return res.status(200);
     });

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {
-    PORT: 5000,
+    PORT: process.env.PORT || 5000,
     dbURI: "mongodb+srv://hackoverflow:hackoverflow@cluster0.6ecoz.mongodb.net/?retryWrites=true&w=majority",
     saltWorkFactor: 10,
     privateKey: "key",
@@ -24,8 +24,8 @@ exports.default = {
     },
     AWS: {
         FROM_EMAIL: "2020ume0200@iitjammu.ac.in",
-        EMAIL_ACCESS_KEY: "AKIAVGBHQPZOOVT6VZQN",
-        EMAIL_SECRET_KEY: "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",
+        EMAIL_ACCESS_KEY: "AKIAVGBHQPZOFMTXF7HM",
+        EMAIL_SECRET_KEY: "7sHhNykQ/yTRmB/MYHexQUYDDbiZpkOt/3Qik+cr/v82JiPfxFRosiZS8Ee7XEztxT",
         EMAIL_REGION: "ap-south-1",
     },
 };

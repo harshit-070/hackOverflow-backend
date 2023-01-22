@@ -1,5 +1,5 @@
 export default {
-  PORT: 5000,
+  PORT: process.env.PORT || 5000,
   dbURI:
     "mongodb+srv://hackoverflow:hackoverflow@cluster0.6ecoz.mongodb.net/?retryWrites=true&w=majority",
   saltWorkFactor: 10,
