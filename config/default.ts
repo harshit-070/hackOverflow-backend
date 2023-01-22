@@ -26,8 +26,9 @@ export default {
   },
   AWS: {
     FROM_EMAIL: "2020ume0200@iitjammu.ac.in",
-    EMAIL_ACCESS_KEY: "AKIAVGBHQPZOOVT6VZQN",
-    EMAIL_SECRET_KEY: "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",
+    EMAIL_ACCESS_KEY: "AKIAVGBHQPZOFMTXF7HM",
+    EMAIL_SECRET_KEY:
+      "7sHhNykQ/yTRmB/MYHexQUYDDbiZpkOt/3Qik+cr/v82JiPfxFRosiZS8Ee7XEztxT",
     EMAIL_REGION: "ap-south-1",
   },
 };
