@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "nodemon --config nodemon.json src/app.ts",
     "build": "tsc",
-    "start": "node ./dist/src/app.js"
+    "start": "node dist/src/app.js"
   },
   "keywords": [],
   "author": "",
