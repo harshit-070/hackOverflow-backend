@@ -5,6 +5,9 @@ import userRoutes from "./User.routes";
 import resumeRoutes from "./Resume.routes";
 
 export default function routes(app: Application) {
+  app.get("/", (req: Request, res: Response) => {
+    return res.status(200);
+  });
   app.get("/healthCheck", (req: Request, res: Response) => {
     return res.status(200);
   });
