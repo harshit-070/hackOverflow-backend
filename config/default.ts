@@ -3,8 +3,7 @@ export default {
   dbURI: "mongodb://localhost:27017/resume",
   saltWorkFactor: 10,
   privateKey: "key",
-  redisURL:
-    "redis://default:n3feiOxRCQHJOOAjQ2VlMhbNQcycHv2p@redis-10072.c305.ap-south-1-1.ec2.cloud.redislabs.com:10072",
+  redisURL: 6379,
   Cookie: {
     ACCESS_TOKEN_TTL: 1,
   },

@@ -30,6 +30,8 @@ import validateRequest from "../middleware/validateRequest";
 import {
   getResumeSchema,
   updateContactDetailsSchema,
+  updateEducationSchema,
+  updateExperienceSchema,
   updatePersonalDetailsSchema,
 } from "../schema/Resume.schema";
 const router = Router();
@@ -69,7 +71,7 @@ router.get(
 );
 router.post(
   "/education",
-  [deserializeUser, requireUser],
+  [validateRequest(updateEducationSchema), deserializeUser, requireUser],
   updateEducationHandler
 );
 
@@ -80,7 +82,7 @@ router.get(
 );
 router.post(
   "/experience",
-  [deserializeUser, requireUser],
+  [validateRequest(updateExperienceSchema), deserializeUser, requireUser],
   updateExperienceHandler
 );
 

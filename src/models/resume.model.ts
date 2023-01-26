@@ -27,23 +27,20 @@ export interface ResumeInput {
     title: string;
     name: string;
     location: string;
-    startDate: Date;
-    endDate: Date;
-    start_month: number;
-    end_month: number;
+    start_month: string;
+    end_month: string;
     start_year: number;
     end_year: number;
     is_present: boolean;
     description: string;
     category: string;
+    otherCategory: string;
   }[];
   education: {
     specialization: string;
     name: string;
     percentage: string;
     location: string;
-    startDate: Date;
-    endDate: Date;
     start_month: number;
     end_month: number;
     start_year: number;
@@ -100,14 +97,13 @@ const ResumeSchema = new Schema<ResumeDocument>({
       name: { type: String },
       location: { type: String },
       category: { type: String },
-      startDate: { type: Date },
-      endDate: { type: Date },
-      start_month: { type: Number },
-      end_month: { type: Number },
+      start_month: { type: String },
+      end_month: { type: String },
       start_year: { type: Number },
       end_year: { type: Number },
       is_present: { type: Boolean },
       description: { type: String },
+      otherCategory: { type: String },
     },
   ],
   education: [
@@ -118,8 +114,8 @@ const ResumeSchema = new Schema<ResumeDocument>({
       location: { type: String },
       startDate: { type: Date },
       endDate: { type: Date },
-      start_month: { type: Number },
-      end_month: { type: Number },
+      start_month: { type: String },
+      end_month: { type: String },
       start_year: { type: Number },
       end_year: { type: Number },
       description: { type: String },
