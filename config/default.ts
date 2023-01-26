@@ -1,7 +1,6 @@
 export default {
   PORT: process.env.PORT || 5000,
-  dbURI:
-    "mongodb+srv://hackoverflow:hackoverflow@cluster0.6ecoz.mongodb.net/?retryWrites=true&w=majority",
+  dbURI: "mongodb://localhost:27017/resume",
   saltWorkFactor: 10,
   privateKey: "key",
   redisURL:
@@ -26,9 +25,8 @@ export default {
   },
   AWS: {
     FROM_EMAIL: "2020ume0200@iitjammu.ac.in",
-    EMAIL_ACCESS_KEY: "AKIAVGBHQPZOFMTXF7HM",
-    EMAIL_SECRET_KEY:
-      "7sHhNykQ/yTRmB/MYHexQUYDDbiZpkOt/3Qik+cr/v82JiPfxFRosiZS8Ee7XEztxT",
+    EMAIL_ACCESS_KEY: "AKIAVGBHQPZOCRFULJMO",
+    EMAIL_SECRET_KEY: "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",
     EMAIL_REGION: "ap-south-1",
   },
 };

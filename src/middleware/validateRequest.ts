@@ -14,8 +14,15 @@ const validateRequest =
       req.body = response.body;
       req.params = response.params;
       next();
-    } catch (e: any) {
-      return res.status(400).json({ success: false, error: e.errors });
+    } catch (error: any) {
+      const errors = [];
+      for (const e of error.errors) {
+        console.log(e);
+        errors.push(e.message);
+      }
+      return res
+        .status(400)
+        .json({ success: false, message: errors.join(". ") });
     }
   };
 

@@ -27,7 +27,11 @@ import {
 import deserializeUser from "../middleware/deserializeUser";
 import { requireUser } from "../middleware/permission";
 import validateRequest from "../middleware/validateRequest";
-import { getResumeSchema } from "../schema/Routes.schema";
+import {
+  getResumeSchema,
+  updateContactDetailsSchema,
+  updatePersonalDetailsSchema,
+} from "../schema/Resume.schema";
 const router = Router();
 
 router.post("/create", [deserializeUser, requireUser], createResumeHandler);
@@ -42,7 +46,7 @@ router.get(
 
 router.post(
   "/personal",
-  [deserializeUser, requireUser],
+  [validateRequest(updatePersonalDetailsSchema), deserializeUser, requireUser],
   updatePersonalInfoHandler
 );
 
@@ -54,7 +58,7 @@ router.get(
 
 router.post(
   "/contact",
-  [deserializeUser, requireUser],
+  [validateRequest(updateContactDetailsSchema), deserializeUser, requireUser],
   updateContactInfoHandler
 );
 

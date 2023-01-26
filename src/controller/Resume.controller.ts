@@ -7,6 +7,7 @@ import ErrorHandler from "../utils/error.utils";
 import html_to_pdf from "html-pdf-node";
 import path from "path";
 import fs from "fs";
+import { omit } from "lodash";
 
 export const createResumeHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -47,7 +48,7 @@ export const getPersonalInfoHandler = asyncHandler(
     await canUpdateResume(user_id, resume_id);
 
     const resume = await ResumeModel.findOne({ user_id, _id: resume_id })
-      .select("name headline summary")
+      .select("personalDetails")
       .lean(true);
 
     console.log(resume);
@@ -62,13 +63,13 @@ export const getPersonalInfoHandler = asyncHandler(
 export const updatePersonalInfoHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const user_id = getLoggedInUserId(res);
-    const { resume_id, name, summary, headline } = req.body;
+    const { resume_id, name, summary } = req.body;
 
     await canUpdateResume(user_id, resume_id);
 
     await ResumeModel.findOneAndUpdate(
       { user_id, _id: resume_id },
-      { name, summary, headline }
+      { personalDetails: { name, summary } }
     );
 
     return res.json({ message: "Resume Updated" });
@@ -83,7 +84,7 @@ export const getContactInfoHandler = asyncHandler(
     await canUpdateResume(user_id, resume_id);
 
     const resume = await ResumeModel.findOne({ user_id, _id: resume_id })
-      .select("address contact socialMedia")
+      .select("contactDetails")
       .lean(true);
 
     console.log(resume);
@@ -98,13 +99,13 @@ export const getContactInfoHandler = asyncHandler(
 export const updateContactInfoHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const user_id = getLoggedInUserId(res);
-    const { resume_id, address, contact, socialMedia } = req.body;
+    const { resume_id } = req.body;
 
     await canUpdateResume(user_id, resume_id);
 
     await ResumeModel.findOneAndUpdate(
       { user_id, _id: resume_id },
-      { address, contact, socialMedia }
+      { contactDetails: omit(req.body, "resume_id") }
     );
 
     return res.json({ message: "Resume Updated" });

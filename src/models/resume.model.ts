@@ -3,27 +3,25 @@ import { UserDocument } from "./user.model";
 
 export interface ResumeInput {
   user_id: UserDocument["_id"];
-  name: string;
-  headline: string;
-  summary: string;
-  photo: string;
-  video_resume: string;
-  address: {
+  personalDetails: {
+    name: string;
+    summary: string;
+  };
+  contactDetails: {
+    email: string;
+    number: string;
     city: string;
     country: string;
   };
-  contact: {
-    email: string;
-    number: string;
-  };
+  photo: string;
+  video_resume: string;
   socialMedia: {
     linkedin: string;
     github: string;
     instagram: string;
     facebook: string;
-    other: string;
+    otherSocialMedia: string[];
   };
-  otherSocialMedia: string[];
   skills: string[];
   experience: {
     title: string;
@@ -78,27 +76,23 @@ export interface ResumeDocument extends Document, ResumeInput {}
 
 const ResumeSchema = new Schema<ResumeDocument>({
   user_id: { type: Schema.Types.ObjectId, required: true },
-  name: { type: String },
-  headline: { type: String },
-  summary: { type: String },
+  personalDetails: {
+    name: { type: String, default: "Name" },
+    summary: { type: String, default: "" },
+  },
+  contactDetails: {
+    email: { type: String, default: "" },
+    number: { type: String, default: "" },
+    city: { type: String, default: "" },
+    country: { type: String, default: "" },
+    linkedin: { type: String, default: "" },
+    github: { type: String, default: "" },
+    instagram: { type: String, default: "" },
+    facebook: { type: String, default: "" },
+    otherSocialMedia: [{ type: String }],
+  },
   photo: { type: String },
   video_resume: { type: String },
-  address: {
-    city: { type: String },
-    country: { type: String },
-  },
-  contact: {
-    email: { type: String },
-    number: { type: String },
-  },
-  socialMedia: {
-    linkedin: { type: String },
-    github: { type: String },
-    instagram: { type: String },
-    facebook: { type: String },
-    other: { type: String },
-  },
-  otherSocialMedia: [{ type: String }],
   skills: [{ type: String }],
   experience: [
     {
