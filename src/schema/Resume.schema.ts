@@ -43,17 +43,17 @@ export const updateEducationSchema = object({
     resume_id,
     education : object({
       specialization: string({required_error: "Specialization is Required"}),
-      percentage: string({required_error: "Specialization is Required"}),
-    location: string({required_error: "Specialization is Required"}),
-    startDate: date(),
-    endDate: Date,
-    start_month: number,
-    end_month: number,
-    start_year: number,
-    end_year: number,
-    description: string,
-    category: string,
-    otherCategory: string,
+      percentage: string({required_error: "percentage is Required"}),
+    location: string({required_error: "location is Required"}),
+    // startDate: date(required_error: "date is Required"),
+    // endDate: date(required_error: "date is Required"),
+    // start_month: number,
+    // end_month: number,
+    // start_year: number,
+    // end_year: number,
+    description: string({required_error: "description is Required"}),
+    category: string({required_error: "category is Required"}),
+    otherCategory: string({required_error: "category is Required"}),
     }).array()
   })
 })
