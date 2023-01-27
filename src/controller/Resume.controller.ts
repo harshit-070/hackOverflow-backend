@@ -495,3 +495,66 @@ export const sendEmail = asyncHandler(
     });
   }
 );
+
+export const addCustomizedSectionHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = getLoggedInUserId(res);
+    const { resume_id, title, type } = req.body;
+
+    await canUpdateResume(user_id, resume_id);
+
+    await ResumeModel.findOneAndUpdate(
+      { _id: resume_id },
+      { $push: { customizedSections: { title, type } } }
+    );
+
+    return res.status(200).json({
+      message: "Section Added",
+      isSucess: true,
+    });
+  }
+);
+
+export const getCustomizedSectionHanlder = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = getLoggedInUserId(res);
+    const { resume_id } = req.params;
+
+    await canUpdateResume(user_id, resume_id);
+
+    const titles = await ResumeModel.findOne({ _id: resume_id })
+      .select("customizedSections")
+      .lean(true);
+
+    return res.status(200).json({
+      message: "Sections",
+      isSucess: true,
+      data: titles,
+    });
+  }
+);
+
+export const updateCustomizedSectionHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = getLoggedInUserId(res);
+    const { resume_id, _id } = req.body;
+    console.log(req.body.data);
+    await canUpdateResume(user_id, resume_id);
+
+    await ResumeModel.findOneAndUpdate(
+      {
+        _id: resume_id,
+        "customizedSections._id": _id,
+      },
+      {
+        $set: {
+          "customizedSections.$.data": req.body.data,
+        },
+      }
+    );
+    return res.status(200).json({
+      message: "Sections Updated",
+      isSucess: true,
+    });
+  }
+);

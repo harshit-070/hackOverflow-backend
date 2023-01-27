@@ -1,10 +1,12 @@
 import { Router } from "express";
 import {
+  addCustomizedSectionHandler,
   createResumeHandler,
   downloadPDF,
   getAchievementsHandler,
   getCertificationHandler,
   getContactInfoHandler,
+  getCustomizedSectionHanlder,
   getEducationHandler,
   getExperienceHandler,
   getHobbiesHandler,
@@ -16,6 +18,7 @@ import {
   updateAchievementsHandler,
   updateCertificationHandler,
   updateContactInfoHandler,
+  updateCustomizedSectionHandler,
   updateEducationHandler,
   updateExperienceHandler,
   updateHobbiesHandler,
@@ -29,10 +32,13 @@ import { requireUser } from "../middleware/permission";
 import validateRequest from "../middleware/validateRequest";
 import {
   getResumeSchema,
+  updateAchievementSchema,
   updateContactDetailsSchema,
   updateEducationSchema,
   updateExperienceSchema,
   updatePersonalDetailsSchema,
+  updateProjectSchema,
+  updateSkillsSchema,
 } from "../schema/Resume.schema";
 const router = Router();
 
@@ -91,7 +97,11 @@ router.get(
   [validateRequest(getResumeSchema), deserializeUser, requireUser],
   getProjectsHandler
 );
-router.post("/project", [deserializeUser, requireUser], updateProjectsHandler);
+router.post(
+  "/project",
+  [validateRequest(updateProjectSchema), deserializeUser, requireUser],
+  updateProjectsHandler
+);
 router.get(
   "/hobbies",
   [validateRequest(getResumeSchema), deserializeUser, requireUser],
@@ -111,7 +121,7 @@ router.get(
 );
 router.post(
   "/achievements",
-  [deserializeUser, requireUser],
+  [validateRequest(updateAchievementSchema), deserializeUser, requireUser],
   updateAchievementsHandler
 );
 router.get(
@@ -130,7 +140,29 @@ router.get(
   [validateRequest(getResumeSchema), deserializeUser, requireUser],
   getSkillsHandler
 );
-router.post("/skills", [deserializeUser, requireUser], updateSkillsHandlers);
+router.post(
+  "/skills",
+  [validateRequest(updateSkillsSchema), deserializeUser, requireUser],
+  updateSkillsHandlers
+);
+
+router.get(
+  "/customized/:resume_id",
+  [deserializeUser, requireUser],
+  getCustomizedSectionHanlder
+);
+
+router.post(
+  "/customized/add",
+  [deserializeUser, requireUser],
+  addCustomizedSectionHandler
+);
+
+router.post(
+  "/customized",
+  [deserializeUser, requireUser],
+  updateCustomizedSectionHandler
+);
 
 router.get("/pdf/:resume_id/:template", downloadPDF);
 

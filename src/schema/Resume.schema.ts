@@ -136,3 +136,93 @@ export const updateExperienceSchema = object({
       return !isInvalidYear;
     }, "Start Month is Greater than End Month"),
 });
+
+export const updateProjectSchema = object({
+  body: object({
+    resume_id,
+    projects: object({
+      _id: string().optional(),
+      title: string({ required_error: "Job Title is Required is Required" }),
+      role: string({ required_error: "Role is Required" }),
+      company: string({ required_error: "Company Name is Required" }),
+      description: string({
+        required_error: "Project Description is Required",
+      }),
+      location: string({ required_error: "location is Required" }),
+      start_month: Zenum(months),
+      end_month: Zenum(months),
+      start_year: number().min(1972).max(2052),
+      end_year: number().min(1972).max(2052),
+    }).array(),
+  })
+    .refine((data) => {
+      const isInvalidYear = data.projects.some(
+        (project) => project.start_year > project.end_year
+      );
+      return !isInvalidYear;
+    }, "Start Year is Greater than End Year")
+    .refine((data) => {
+      const isInvalidYear = data.projects.some(
+        (project) =>
+          project.start_year === project.end_year &&
+          months.indexOf(project.start_month) >
+            months.indexOf(project.end_month)
+      );
+      return !isInvalidYear;
+    }, "Start Month is Greater than End Month"),
+});
+
+export const updateSkillsSchema = object({
+  body: object({
+    resume_id,
+    skills: string().array(),
+  }),
+});
+
+export const updateAchievementSchema = object({
+  body: object({
+    resume_id,
+    achievements: string({ required_error: "Description is Required" }),
+  }),
+});
+
+export const updateCustomizedSectionSchema = object({
+  body: object({
+    resume_id,
+    _id: string({}),
+    data: object({
+      title: string({ required_error: "Job Title is Required is Required" }),
+      name: string({ required_error: "Company Name is Required" }),
+      category: string({ required_error: "category is Required" }),
+      otherCategory: string({
+        required_error: "category is Required",
+      }).optional(),
+      location: string({ required_error: "location is Required" }),
+      start_month: Zenum(months),
+      end_month: Zenum(months),
+      start_year: number().min(1972).max(2052),
+      end_year: number().min(1972).max(2052),
+      description: string({ required_error: "Job Description is Required" }),
+    }).array(),
+  })
+    .refine((data) => {
+      const isInvalidData = data.data.some(
+        (data) => data.category === "Others" && !data.otherCategory
+      );
+      return !isInvalidData;
+    }, "Category is Required")
+    .refine((data) => {
+      const isInvalidYear = data.data.some(
+        (data) => data.start_year > data.end_year
+      );
+      return !isInvalidYear;
+    }, "Start Year is Greater than End Year")
+    .refine((data) => {
+      const isInvalidYear = data.data.some(
+        (data) =>
+          data.start_year === data.end_year &&
+          months.indexOf(data.start_month) > months.indexOf(data.end_month)
+      );
+      return !isInvalidYear;
+    }, "Start Month is Greater than End Month"),
+});
