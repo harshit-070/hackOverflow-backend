@@ -173,6 +173,7 @@ const ResumeSchema = new Schema<ResumeDocument>({
           is_present: { type: Boolean },
           description: { type: String },
           otherCategory: { type: String },
+          skills: [{ type: String }],
         },
       ],
     },
