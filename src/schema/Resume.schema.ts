@@ -189,40 +189,60 @@ export const updateAchievementSchema = object({
 export const updateCustomizedSectionSchema = object({
   body: object({
     resume_id,
-    _id: string({}),
+    _id: string({ required_error: "Id is requried" }),
     data: object({
-      title: string({ required_error: "Job Title is Required is Required" }),
-      name: string({ required_error: "Company Name is Required" }),
-      category: string({ required_error: "category is Required" }),
+      type: Zenum(["Achievement Type", "Skill Type", "Experience Type"]),
+      title: string({
+        required_error: "Job Title is Required is Required",
+      }).optional(),
+      name: string({ required_error: "Company Name is Required" }).optional(),
+      category: string({ required_error: "category is Required" }).optional(),
       otherCategory: string({
         required_error: "category is Required",
       }).optional(),
-      location: string({ required_error: "location is Required" }),
-      start_month: Zenum(months),
-      end_month: Zenum(months),
-      start_year: number().min(1972).max(2052),
-      end_year: number().min(1972).max(2052),
-      description: string({ required_error: "Job Description is Required" }),
+      location: string({ required_error: "location is Required" }).optional(),
+      start_month: Zenum(months).optional(),
+      end_month: Zenum(months).optional(),
+      start_year: number().min(1972).max(2052).optional(),
+      end_year: number().min(1972).max(2052).optional(),
+      description: string({
+        required_error: "Job Description is Required",
+      }).optional(),
+      skills: string().array().optional(),
     }).array(),
-  })
-    .refine((data) => {
-      const isInvalidData = data.data.some(
-        (data) => data.category === "Others" && !data.otherCategory
-      );
-      return !isInvalidData;
-    }, "Category is Required")
-    .refine((data) => {
-      const isInvalidYear = data.data.some(
-        (data) => data.start_year > data.end_year
-      );
-      return !isInvalidYear;
-    }, "Start Year is Greater than End Year")
-    .refine((data) => {
-      const isInvalidYear = data.data.some(
-        (data) =>
-          data.start_year === data.end_year &&
-          months.indexOf(data.start_month) > months.indexOf(data.end_month)
-      );
-      return !isInvalidYear;
-    }, "Start Month is Greater than End Month"),
+  }).refine((data) => {
+    const isInvalidData = data.data.some(
+      (data) => data.category === "Others" && !data.otherCategory
+    );
+    return !isInvalidData;
+  }, "Category is Required"),
+  // .refine((data) => {
+  //   const isInvalidYear = data.data.some(
+  //     (data) => data.start_year > data.end_year
+  //   );
+  //   return !isInvalidYear;
+  // }, "Start Year is Greater than End Year")
+  // .refine((data) => {
+  //   const isInvalidYear = data.data.some(
+  //     (data) =>
+  //       data.start_year === data.end_year &&
+  //       months.indexOf(data.start_month) > months.indexOf(data.end_month)
+  //   );
+  //   return !isInvalidYear;
+  // }, "Start Month is Greater than End Month"),
+});
+
+export const updateCustmoziedSectionTitleSchema = object({
+  body: object({
+    resume_id,
+    _id: string({ required_error: "Id is required" }),
+    title: string({ required_error: "Title is requried" }),
+  }),
+});
+
+export const deleteCustomizedSectionSchema = object({
+  body: object({
+    resume_id,
+    _id: string({ required_error: "Id is required" }),
+  }),
 });

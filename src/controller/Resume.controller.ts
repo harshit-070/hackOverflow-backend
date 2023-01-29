@@ -538,7 +538,6 @@ export const updateCustomizedSectionHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const user_id = getLoggedInUserId(res);
     const { resume_id, _id } = req.body;
-    console.log(req.body.data);
     await canUpdateResume(user_id, resume_id);
 
     await ResumeModel.findOneAndUpdate(
@@ -549,6 +548,53 @@ export const updateCustomizedSectionHandler = asyncHandler(
       {
         $set: {
           "customizedSections.$.data": req.body.data,
+        },
+      }
+    );
+    return res.status(200).json({
+      message: "Sections Updated",
+      isSucess: true,
+    });
+  }
+);
+
+export const updateCustomizedSectionTitleHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = getLoggedInUserId(res);
+    const { resume_id, _id } = req.body;
+    await canUpdateResume(user_id, resume_id);
+
+    await ResumeModel.findOneAndUpdate(
+      {
+        _id: resume_id,
+        "customizedSections._id": _id,
+      },
+      {
+        $set: {
+          "customizedSections.$.title": req.body.title,
+        },
+      }
+    );
+    return res.status(200).json({
+      message: "Sections Updated",
+      isSucess: true,
+    });
+  }
+);
+
+export const deleteCustmoizedSectionHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = getLoggedInUserId(res);
+    const { resume_id, _id } = req.body;
+    await canUpdateResume(user_id, resume_id);
+
+    await ResumeModel.findOneAndUpdate(
+      {
+        _id: resume_id,
+      },
+      {
+        $pull: {
+          customizedSections: { _id },
         },
       }
     );

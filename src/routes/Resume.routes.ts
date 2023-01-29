@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   addCustomizedSectionHandler,
   createResumeHandler,
+  deleteCustmoizedSectionHandler,
   downloadPDF,
   getAchievementsHandler,
   getCertificationHandler,
@@ -19,6 +20,7 @@ import {
   updateCertificationHandler,
   updateContactInfoHandler,
   updateCustomizedSectionHandler,
+  updateCustomizedSectionTitleHandler,
   updateEducationHandler,
   updateExperienceHandler,
   updateHobbiesHandler,
@@ -31,9 +33,11 @@ import deserializeUser from "../middleware/deserializeUser";
 import { requireUser } from "../middleware/permission";
 import validateRequest from "../middleware/validateRequest";
 import {
+  deleteCustomizedSectionSchema,
   getResumeSchema,
   updateAchievementSchema,
   updateContactDetailsSchema,
+  updateCustmoziedSectionTitleSchema,
   updateEducationSchema,
   updateExperienceSchema,
   updatePersonalDetailsSchema,
@@ -162,6 +166,26 @@ router.post(
   "/customized",
   [deserializeUser, requireUser],
   updateCustomizedSectionHandler
+);
+
+router.post(
+  "/customized/title",
+  [
+    validateRequest(updateCustmoziedSectionTitleSchema),
+    deserializeUser,
+    requireUser,
+  ],
+  updateCustomizedSectionTitleHandler
+);
+
+router.delete(
+  "/customized",
+  [
+    validateRequest(deleteCustomizedSectionSchema),
+    deserializeUser,
+    requireUser,
+  ],
+  deleteCustmoizedSectionHandler
 );
 
 router.get("/pdf/:resume_id/:template", downloadPDF);
