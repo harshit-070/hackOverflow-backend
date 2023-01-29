@@ -157,12 +157,6 @@ router.get(
 );
 
 router.post(
-  "/customized/add",
-  [deserializeUser, requireUser],
-  addCustomizedSectionHandler
-);
-
-router.post(
   "/customized",
   [deserializeUser, requireUser],
   updateCustomizedSectionHandler
@@ -176,6 +170,12 @@ router.post(
     requireUser,
   ],
   updateCustomizedSectionTitleHandler
+);
+
+router.post(
+  "/customized/add",
+  [deserializeUser, requireUser],
+  addCustomizedSectionHandler
 );
 
 router.delete(

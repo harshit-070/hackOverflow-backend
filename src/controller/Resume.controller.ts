@@ -12,7 +12,6 @@ import { omit } from "lodash";
 export const createResumeHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userID = getLoggedInUserId(res);
-    console.log(userID);
     const resume = await createResume({ name: "Name", user_id: userID });
 
     return res.json({
@@ -51,8 +50,6 @@ export const getPersonalInfoHandler = asyncHandler(
       .select("personalDetails")
       .lean(true);
 
-    console.log(resume);
-
     return res.json({
       data: resume,
       isSuccess: true,
@@ -86,8 +83,6 @@ export const getContactInfoHandler = asyncHandler(
     const resume = await ResumeModel.findOne({ user_id, _id: resume_id })
       .select("contactDetails")
       .lean(true);
-
-    console.log(resume);
 
     return res.json({
       data: resume,
@@ -563,7 +558,6 @@ export const updateCustomizedSectionTitleHandler = asyncHandler(
     const user_id = getLoggedInUserId(res);
     const { resume_id, _id } = req.body;
     await canUpdateResume(user_id, resume_id);
-
     await ResumeModel.findOneAndUpdate(
       {
         _id: resume_id,
