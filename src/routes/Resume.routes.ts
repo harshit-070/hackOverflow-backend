@@ -5,6 +5,7 @@ import {
   deleteCustmoizedSectionHandler,
   deleteResumeHandler,
   downloadPDF,
+  fetchUserResumeHandler,
   getAchievementsHandler,
   getBasicDetailsHandler,
   getCertificationHandler,
@@ -54,6 +55,8 @@ import {
 const router = Router();
 
 router.post("/create", [deserializeUser, requireUser], createResumeHandler);
+
+router.get("/get/:username/:resume_name", fetchUserResumeHandler);
 
 router.get("/fetch/:resume_id", getResumeHandler);
 

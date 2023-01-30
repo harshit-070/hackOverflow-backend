@@ -4,6 +4,7 @@ import ResumeModel from "../models/resume.model";
 import { createResume } from "../services/Resume.service";
 import {
   canUpdateResume,
+  findUserByUsername,
   getLoggedInUser,
   getLoggedInUserId,
 } from "../services/User.service";
@@ -638,5 +639,34 @@ export const getBasicDetailsHandler = asyncHandler(
       isSucess: true,
       data: titles,
     });
+  }
+);
+
+export const fetchUserResumeHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { username, resume_name } = req.params;
+    const user = await findUserByUsername(username);
+
+    if (!user) {
+      return res.status(404).json({
+        isSuccess: false,
+        message: "Not found",
+      });
+    }
+
+    const resume = await ResumeModel.findOne({
+      name: resume_name,
+      user_id: user._id,
+      isPublished: true,
+    }).lean(true);
+
+    if (!resume) {
+      return res.status(404).json({
+        isSuccess: false,
+        message: "Not found",
+      });
+    }
+
+    return res.status(200).json({ data: resume, message: "Resume Fetched" });
   }
 );
