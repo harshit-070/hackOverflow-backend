@@ -1,5 +1,5 @@
 import { isValidObjectId } from "mongoose";
-import { number, object, string, enum as Zenum } from "zod";
+import { number, object, string, enum as Zenum, boolean } from "zod";
 
 const resume_id = string({ required_error: "Resume Id is Required" }).refine(
   (data) => isValidObjectId(data),
@@ -244,5 +244,31 @@ export const deleteCustomizedSectionSchema = object({
   body: object({
     resume_id,
     _id: string({ required_error: "Id is required" }),
+  }),
+});
+
+export const deleteResumeSchema = object({
+  params: object({
+    resume_id,
+  }),
+});
+
+export const publishResumeSchema = object({
+  body: object({
+    resume_id,
+    publish: boolean({ required_error: "Publish is required" }),
+  }),
+});
+
+export const updateResumeSchema = object({
+  body: object({
+    resume_id,
+    isPublished: boolean({
+      invalid_type_error: "Publish must be a boolean",
+    }).optional(),
+    template_number: number({
+      invalid_type_error: "Template Number must a number",
+    }).optional(),
+    name: string({ invalid_type_error: "Name must be a string" }).optional(),
   }),
 });

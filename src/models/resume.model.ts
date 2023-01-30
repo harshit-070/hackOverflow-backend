@@ -7,6 +7,9 @@ export interface ResumeInput {
     name: string;
     summary: string;
   };
+  isPublished: boolean;
+  template_number: number;
+  name: string;
   contactDetails: {
     email: string;
     number: string;
@@ -97,6 +100,9 @@ const ResumeSchema = new Schema<ResumeDocument>(
       name: { type: String, default: "Name" },
       summary: { type: String, default: "" },
     },
+    name: { type: String, default: "Resume" },
+    isPublished: { type: Boolean, default: false },
+    template_number: { type: Number, default: 1 },
     contactDetails: {
       email: { type: String, default: "" },
       number: { type: String, default: "" },

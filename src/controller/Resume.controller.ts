@@ -2,17 +2,31 @@ import { NextFunction, Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import ResumeModel from "../models/resume.model";
 import { createResume } from "../services/Resume.service";
-import { canUpdateResume, getLoggedInUserId } from "../services/User.service";
+import {
+  canUpdateResume,
+  getLoggedInUser,
+  getLoggedInUserId,
+} from "../services/User.service";
 import ErrorHandler from "../utils/error.utils";
 import html_to_pdf from "html-pdf-node";
 import path from "path";
 import fs from "fs";
 import { omit } from "lodash";
+import c from "config";
 
 export const createResumeHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userID = getLoggedInUserId(res);
-    const resume = await createResume({ name: "Name", user_id: userID });
+    const user = getLoggedInUser(res);
+
+    const resumeCount = await ResumeModel.count({ user_id: userID });
+
+    const resume = await createResume({
+      name: `resume_${resumeCount}`,
+      user_id: userID,
+      personalDetails: { name: user.name },
+      contactDetails: { email: user.email },
+    });
 
     return res.json({
       message: "Resume Create",
@@ -64,7 +78,7 @@ export const updatePersonalInfoHandler = asyncHandler(
 
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate(
+    await ResumeModel.updateOne(
       { user_id, _id: resume_id },
       { personalDetails: { name, summary } }
     );
@@ -98,7 +112,7 @@ export const updateContactInfoHandler = asyncHandler(
 
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate(
+    await ResumeModel.updateOne(
       { user_id, _id: resume_id },
       { contactDetails: omit(req.body, "resume_id") }
     );
@@ -114,10 +128,7 @@ export const updateExperienceHandler = asyncHandler(
 
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate(
-      { user_id, _id: resume_id },
-      { experience }
-    );
+    await ResumeModel.updateOne({ user_id, _id: resume_id }, { experience });
 
     return res.json({ message: "Resume Updated" });
   }
@@ -129,10 +140,7 @@ export const updateEducationHandler = asyncHandler(
 
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate(
-      { user_id, _id: resume_id },
-      { education }
-    );
+    await ResumeModel.updateOne({ user_id, _id: resume_id }, { education });
 
     return res.json({ message: "Resume Updated" });
   }
@@ -145,10 +153,7 @@ export const updateProjectsHandler = asyncHandler(
 
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate(
-      { user_id, _id: resume_id },
-      { projects }
-    );
+    await ResumeModel.updateOne({ user_id, _id: resume_id }, { projects });
 
     return res.json({ message: "Resume Updated" });
   }
@@ -161,10 +166,7 @@ export const updateHobbiesHandler = asyncHandler(
 
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate(
-      { user_id, _id: resume_id },
-      { hobbies }
-    );
+    await ResumeModel.updateOne({ user_id, _id: resume_id }, { hobbies });
     return res.json({ message: "Resume Updated" });
   }
 );
@@ -176,10 +178,7 @@ export const updateLanguageHander = asyncHandler(
 
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate(
-      { user_id, _id: resume_id },
-      { languages }
-    );
+    await ResumeModel.updateOne({ user_id, _id: resume_id }, { languages });
     return res.json({ message: "Resume Updated" });
   }
 );
@@ -191,10 +190,7 @@ export const updateAchievementsHandler = asyncHandler(
 
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate(
-      { user_id, _id: resume_id },
-      { achievements }
-    );
+    await ResumeModel.updateOne({ user_id, _id: resume_id }, { achievements });
     return res.json({ message: "Resume Updated" });
   }
 );
@@ -206,10 +202,7 @@ export const updateCertificationHandler = asyncHandler(
 
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate(
-      { user_id, _id: resume_id },
-      { certification }
-    );
+    await ResumeModel.updateOne({ user_id, _id: resume_id }, { certification });
     return res.json({ message: "Resume Updated" });
   }
 );
@@ -220,7 +213,7 @@ export const updateSkillsHandlers = asyncHandler(
 
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate({ user_id, _id: resume_id }, { skills });
+    await ResumeModel.updateOne({ user_id, _id: resume_id }, { skills });
     return res.json({ message: "Resume Updated" });
   }
 );
@@ -391,16 +384,20 @@ export const getSkillsHandler = asyncHandler(
   }
 );
 
-export const updateResumeHanlder = asyncHandler(
+export const updateResumeHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userID = getLoggedInUserId(res);
+    const user_id = getLoggedInUserId(res);
+    const { resume_id } = req.body;
 
-    const resume = await createResume("Name");
+    await canUpdateResume(user_id, resume_id);
+    await ResumeModel.updateOne(
+      { _id: resume_id },
+      { ...omit(req.body, "resume_id") }
+    );
 
     return res.json({
       message: "Resume Create",
       isSucess: true,
-      data: resume,
     });
   }
 );
@@ -498,7 +495,7 @@ export const addCustomizedSectionHandler = asyncHandler(
 
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate(
+    await ResumeModel.updateOne(
       { _id: resume_id },
       { $push: { customizedSections: { title, type } } }
     );
@@ -535,7 +532,7 @@ export const updateCustomizedSectionHandler = asyncHandler(
     const { resume_id, _id } = req.body;
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate(
+    await ResumeModel.updateOne(
       {
         _id: resume_id,
         "customizedSections._id": _id,
@@ -558,7 +555,7 @@ export const updateCustomizedSectionTitleHandler = asyncHandler(
     const user_id = getLoggedInUserId(res);
     const { resume_id, _id } = req.body;
     await canUpdateResume(user_id, resume_id);
-    await ResumeModel.findOneAndUpdate(
+    await ResumeModel.updateOne(
       {
         _id: resume_id,
         "customizedSections._id": _id,
@@ -582,7 +579,7 @@ export const deleteCustmoizedSectionHandler = asyncHandler(
     const { resume_id, _id } = req.body;
     await canUpdateResume(user_id, resume_id);
 
-    await ResumeModel.findOneAndUpdate(
+    await ResumeModel.updateOne(
       {
         _id: resume_id,
       },
@@ -595,6 +592,51 @@ export const deleteCustmoizedSectionHandler = asyncHandler(
     return res.status(200).json({
       message: "Sections Updated",
       isSucess: true,
+    });
+  }
+);
+
+export const deleteResumeHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = getLoggedInUserId(res);
+    const { resume_id } = req.params;
+    await canUpdateResume(user_id, resume_id);
+
+    await ResumeModel.findOneAndRemove({ _id: resume_id, user_id });
+
+    return res.status(200).json({ message: "Resume deleted", isSuccess: true });
+  }
+);
+
+export const publishResumeHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = getLoggedInUserId(res);
+    const { resume_id, publish } = req.body;
+    await canUpdateResume(user_id, resume_id);
+
+    await ResumeModel.updateOne(
+      { _id: resume_id, user_id },
+      { isPublished: publish }
+    );
+
+    return res.status(200).json({ message: "Resume Updated", isSuccess: true });
+  }
+);
+
+export const getBasicDetailsHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user_id = getLoggedInUserId(res);
+    const { resume_id } = req.params;
+    await canUpdateResume(user_id, resume_id);
+
+    const titles = await ResumeModel.findOne({ _id: resume_id })
+      .select("name template_number isPublished")
+      .lean(true);
+
+    return res.status(200).json({
+      message: "Sections",
+      isSucess: true,
+      data: titles,
     });
   }
 );

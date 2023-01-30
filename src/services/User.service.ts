@@ -62,6 +62,10 @@ export const getLoggedInUserId = (res: Response) => {
   return res.locals.user._id;
 };
 
+export const getLoggedInUser = (res: Response) => {
+  return res.locals.user;
+};
+
 export const findUserByUsername = async (username: string) => {
   return await UserModel.findOne({ username });
 };

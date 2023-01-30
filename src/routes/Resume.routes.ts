@@ -3,8 +3,10 @@ import {
   addCustomizedSectionHandler,
   createResumeHandler,
   deleteCustmoizedSectionHandler,
+  deleteResumeHandler,
   downloadPDF,
   getAchievementsHandler,
+  getBasicDetailsHandler,
   getCertificationHandler,
   getContactInfoHandler,
   getCustomizedSectionHanlder,
@@ -16,6 +18,7 @@ import {
   getProjectsHandler,
   getResumeHandler,
   getSkillsHandler,
+  publishResumeHandler,
   updateAchievementsHandler,
   updateCertificationHandler,
   updateContactInfoHandler,
@@ -27,6 +30,7 @@ import {
   updateLanguageHander,
   updatePersonalInfoHandler,
   updateProjectsHandler,
+  updateResumeHandler,
   updateSkillsHandlers,
 } from "../controller/Resume.controller";
 import deserializeUser from "../middleware/deserializeUser";
@@ -34,7 +38,9 @@ import { requireUser } from "../middleware/permission";
 import validateRequest from "../middleware/validateRequest";
 import {
   deleteCustomizedSectionSchema,
+  deleteResumeSchema,
   getResumeSchema,
+  publishResumeSchema,
   updateAchievementSchema,
   updateContactDetailsSchema,
   updateCustmoziedSectionTitleSchema,
@@ -42,6 +48,7 @@ import {
   updateExperienceSchema,
   updatePersonalDetailsSchema,
   updateProjectSchema,
+  updateResumeSchema,
   updateSkillsSchema,
 } from "../schema/Resume.schema";
 const router = Router();
@@ -49,6 +56,18 @@ const router = Router();
 router.post("/create", [deserializeUser, requireUser], createResumeHandler);
 
 router.get("/fetch/:resume_id", getResumeHandler);
+
+router.get(
+  "/basic/:resume_id",
+  [validateRequest(getResumeSchema), deserializeUser, requireUser],
+  getBasicDetailsHandler
+);
+
+router.post(
+  "/",
+  [validateRequest(updateResumeSchema), deserializeUser, requireUser],
+  updateResumeHandler
+);
 
 router.get(
   "/personal/:resume_id",
@@ -176,6 +195,18 @@ router.post(
   "/customized/add",
   [deserializeUser, requireUser],
   addCustomizedSectionHandler
+);
+
+router.post(
+  "/publish",
+  [validateRequest(publishResumeSchema), deserializeUser, requireUser],
+  publishResumeHandler
+);
+
+router.delete(
+  "/:resume_id",
+  [validateRequest(deleteResumeSchema), deserializeUser, requireUser],
+  deleteResumeHandler
 );
 
 router.delete(
