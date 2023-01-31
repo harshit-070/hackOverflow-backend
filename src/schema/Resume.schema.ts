@@ -113,25 +113,27 @@ export const updateExperienceSchema = object({
       start_year: number().min(1972).max(2052),
       end_year: number().min(1972).max(2052),
       description: string({ required_error: "Job Description is Required" }),
+      is_present: boolean({ required_error: "Is Present is required" }),
     }).array(),
   })
-    .refine((data) => {
-      const isInvalidData = data.experience.some(
-        (exp) => exp.category === "Others" && !exp.otherCategory
-      );
-      return !isInvalidData;
-    }, "Category is Required")
+    // .refine((data) => {
+    //   const isInvalidData = data.experience.some(
+    //     (exp) => exp.category === "Others" && !exp.otherCategory
+    //   );
+    //   return !isInvalidData;
+    // }, "Category is Required")
     .refine((data) => {
       const isInvalidYear = data.experience.some(
-        (exp) => exp.start_year > exp.end_year
+        (exp) => !exp.is_present || exp.start_year > exp.end_year
       );
       return !isInvalidYear;
     }, "Start Year is Greater than End Year")
     .refine((data) => {
       const isInvalidYear = data.experience.some(
         (exp) =>
-          exp.start_year === exp.end_year &&
-          months.indexOf(exp.start_month) > months.indexOf(exp.end_month)
+          !exp.is_present ||
+          (exp.start_year === exp.end_year &&
+            months.indexOf(exp.start_month) > months.indexOf(exp.end_month))
       );
       return !isInvalidYear;
     }, "Start Month is Greater than End Month"),
@@ -153,20 +155,23 @@ export const updateProjectSchema = object({
       end_month: Zenum(months),
       start_year: number().min(1972).max(2052),
       end_year: number().min(1972).max(2052),
+      is_present: boolean({ required_error: "Is Present is required" }),
     }).array(),
   })
     .refine((data) => {
       const isInvalidYear = data.projects.some(
-        (project) => project.start_year > project.end_year
+        (project) =>
+          !project.is_present || project.start_year > project.end_year
       );
       return !isInvalidYear;
     }, "Start Year is Greater than End Year")
     .refine((data) => {
       const isInvalidYear = data.projects.some(
         (project) =>
-          project.start_year === project.end_year &&
-          months.indexOf(project.start_month) >
-            months.indexOf(project.end_month)
+          !project.is_present ||
+          (project.start_year === project.end_year &&
+            months.indexOf(project.start_month) >
+              months.indexOf(project.end_month))
       );
       return !isInvalidYear;
     }, "Start Month is Greater than End Month"),
@@ -209,6 +214,9 @@ export const updateCustomizedSectionSchema = object({
         required_error: "Job Description is Required",
       }).optional(),
       skills: string().array().optional(),
+      is_present: boolean({
+        required_error: "Is Present is required",
+      }).optional(),
     }).array(),
   }).refine((data) => {
     const isInvalidData = data.data.some(
