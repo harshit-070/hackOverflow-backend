@@ -9,5 +9,5 @@ export const requireUser = (
   if (res.locals.user) {
     return next();
   }
-  return next(new ErrorHandler("UnAuthorize", 400));
+  return next(new ErrorHandler("Unauthorize", 400));
 };
